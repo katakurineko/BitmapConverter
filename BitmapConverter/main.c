@@ -14,6 +14,7 @@ int main(void) {
 	if (err == 0) {
 		/*ƒtƒ@ƒCƒ‹‚Ìæ“¾‚É¬Œ÷‚µ‚½Û‚Ìˆ—*/
 
+		/*ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½wï¿½bï¿½_ï¿½Ìï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½Ìˆï¿½ï¿½mï¿½ï¿½*/
 		char bitmapFileHeader[BITMAP_FILEHEADER_SIZE];
 
 		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_SIZE, file);
