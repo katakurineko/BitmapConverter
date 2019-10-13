@@ -50,7 +50,9 @@ int main(void) {
 		/*î•ñƒwƒbƒ_‚Ìî•ñ‚ğæ“¾*/
 		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, file);
 
-		printf("info:%c\n", bitmapInfoHeader[0]);
+		/*ï¿½æ‘œï¿½Ì•ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾*/
+		int width = bitmapInfoHeader[4];
+		int height = bitmapInfoHeader[8];
 
 	}
 	else if (err == ENOENT) {
