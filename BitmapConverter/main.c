@@ -67,6 +67,8 @@ int main(void) {
 
 		if (compression != 0) {
 			/*ƒtƒ@ƒCƒ‹‚ªˆ³k‚³‚ê‚Ä‚¢‚éÛ‚Ìˆ—*/
+			printf("File is compressed");
+			exit(1);
 		}
 
 		printf("%d\n", compression);
