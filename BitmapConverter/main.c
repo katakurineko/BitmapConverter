@@ -25,13 +25,12 @@ int main(void) {
 			printf("This file is not BMP file\n");
 			exit(1);
 		}
-		/*TODO ƒtƒ@ƒCƒ‹‚ª24bytesŒ`®‚Å‚È‚¢ê‡‚Ìˆ—*/
 
 		/*î•ñƒwƒbƒ_‚ÌƒTƒCƒY‚ğæ“¾*/
 		unsigned char bitmapInfoHeaderSize = fgetc(file);
 		if (bitmapInfoHeaderSize != 40) {
-			/*windowsBitmapï¿½ï¿½40ï¿½oï¿½Cï¿½gï¿½Å’è‚¾ï¿½ï¿½ï¿½AOS/2ï¿½Ìê‡ï¿½ï¿½12ï¿½oï¿½Cï¿½gï¿½ç‚µï¿½ï¿½ï¿½Ì‚ÅAOS/2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Ìï¿½ï¿½ï¿½*/
-			/*TODO ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½Bitmapï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½mï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½Ù‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+			/*windowsBitmap‚Í40ƒoƒCƒgŒÅ’è‚¾‚ªAOS/2‚Ìê‡‚Í12ƒoƒCƒg‚ç‚µ‚¢‚Ì‚ÅAOS/2‚¾‚Á‚½ê‡‚Ìˆ—*/
+			/*TODO ‚»‚Ì‘¼‚ÌBitmapƒtƒ@ƒCƒ‹‚àŠm”F‚µ‚½‚Ù‚¤‚ª‚¢‚¢‚©‚à*/
 			printf("This bitmap file is not windowsBitmap\n");
 			exit(1);
 		}
@@ -42,7 +41,7 @@ int main(void) {
 		/*î•ñƒwƒbƒ_‚Ìî•ñ‚ğŠi”[‚·‚é—Ìˆæ‚ğŠm•Û*/
 		char *bitmapInfoHeader = (char *)malloc(40);
 		if (bitmapInfoHeader == NULL) {
-			/*ƒƒ‚ƒŠ‚ÌŠ„“–‚É¸”s‚µ‚½ê‡‚Ìˆ—*/
+			/*ƒƒ‚ƒŠ‚ÌŠ„“–‚É¸”s‚µ‚½Û‚Ìˆ—*/
 			printf("Faild to allocate memory\n");
 			exit(1);
 		}
@@ -50,18 +49,28 @@ int main(void) {
 		/*î•ñƒwƒbƒ_‚Ìî•ñ‚ğæ“¾*/
 		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, file);
 
-		/*ï¿½æ‘œï¿½Ì•ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾*/
+		/*‰æ‘œ‚Ì•A‚‚³‚ğæ“¾*/
 		int width = bitmapInfoHeader[4];
 		int height = bitmapInfoHeader[8];
 
-		/*1ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒfï¿½[ï¿½^ï¿½Tï¿½Cï¿½Yï¿½ï¿½æ“¾*/
+		/*1‰æ‘f‚ ‚½‚è‚Ìƒf[ƒ^ƒTƒCƒY‚ğæ“¾*/
 		short bitsPerPixel = bitmapInfoHeader[14];
 		
 		if (bitsPerPixel != 24) {
-			/*ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½24bitï¿½Å‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û‚Ìï¿½ï¿½ï¿½*/
+			/*ƒtƒ@ƒCƒ‹‚ª24bit‚Å‚È‚©‚Á‚½Û‚Ìˆ—*/
 			printf("This file is not 24bits");
 			exit(1);
 		}
+
+		/*ˆ³kŒ`®‚ğæ“¾*/
+		int compression = bitmapInfoHeader[16];
+
+		if (compression != 0) {
+			/*ƒtƒ@ƒCƒ‹‚ªˆ³k‚³‚ê‚Ä‚¢‚éÛ‚Ìˆ—*/
+		}
+
+		printf("%d\n", compression);
+		
 	}
 	else if (err == ENOENT) {
 		/*ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚©‚Á‚½Û‚Ìˆ—*/
