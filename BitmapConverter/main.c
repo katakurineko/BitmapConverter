@@ -54,6 +54,14 @@ int main(void) {
 		int width = bitmapInfoHeader[4];
 		int height = bitmapInfoHeader[8];
 
+		/*1ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒfï¿½[ï¿½^ï¿½Tï¿½Cï¿½Yï¿½ï¿½æ“¾*/
+		short bitsPerPixel = bitmapInfoHeader[14];
+		
+		if (bitsPerPixel != 24) {
+			/*ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½24bitï¿½Å‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û‚Ìï¿½ï¿½ï¿½*/
+			printf("This file is not 24bits");
+			exit(1);
+		}
 	}
 	else if (err == ENOENT) {
 		/*ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚©‚Á‚½Û‚Ìˆ—*/
