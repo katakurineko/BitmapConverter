@@ -14,16 +14,38 @@ int main(void) {
 	if (err == 0) {
 		/*ƒtƒ@ƒCƒ‹‚Ìæ“¾‚É¬Œ÷‚µ‚½Û‚Ìˆ—*/
 
-		/*ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½wï¿½bï¿½_ï¿½Ìï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½Ìˆï¿½ï¿½mï¿½ï¿½*/
+		/*ƒtƒ@ƒCƒ‹ƒwƒbƒ_‚Ìî•ñ‚ğŠi”[‚·‚é—Ìˆæ‚ğŠm•Û*/
 		char bitmapFileHeader[BITMAP_FILEHEADER_SIZE];
 
+		/*ƒtƒ@ƒCƒ‹ƒwƒbƒ_‚Ìî•ñ‚ğæ“¾*/
 		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_SIZE, file);
 
 		if (strncmp("BM", bitmapFileHeader, 2) != 0) {
 			/*ƒtƒ@ƒCƒ‹ƒwƒbƒ_‚Ìƒtƒ@ƒCƒ‹ƒ^ƒCƒv‚ªBM‚Å‚È‚©‚Á‚½Û‚Ìˆ—*/
-			printf("This file is not BMP file");
+			printf("This file is not BMP file\n");
 			exit(1);
 		}
+		/*TODO ƒtƒ@ƒCƒ‹‚ª24bytesŒ`®‚Å‚È‚¢ê‡‚Ìˆ—*/
+
+		/*î•ñƒwƒbƒ_‚ÌƒTƒCƒY‚ğæ“¾*/
+		unsigned char bitmapInfoHeaderSize = fgetc(file);
+
+		/*ƒtƒ@ƒCƒ‹‚ÌˆÊ’uw’èq‚ğ1ƒoƒCƒg–ß‚µ‚ÄAî•ñƒwƒbƒ_‚ÌŠJnˆÊ’u‚Ö*/
+		fseek(file, 1, SEEK_CUR);
+
+		/*î•ñƒwƒbƒ_‚Ìî•ñ‚ğŠi”[‚·‚é—Ìˆæ‚ğŠm•Û*/
+		char *bitmapInfoHeader = (char *)malloc(40);
+		if (bitmapInfoHeader == NULL) {
+			/*ƒƒ‚ƒŠ‚ÌŠ„“–‚É¸”s‚µ‚½ê‡‚Ìˆ—*/
+			printf("Faild to allocate memory\n");
+			exit(1);
+		}
+
+		/*î•ñƒwƒbƒ_‚Ìî•ñ‚ğæ“¾*/
+		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, file);
+
+		printf("info:%c\n", bitmapInfoHeader[0]);
+
 	}
 	else if (err == ENOENT) {
 		/*ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚©‚Á‚½Û‚Ìˆ—*/
