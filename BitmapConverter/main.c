@@ -29,6 +29,12 @@ int main(void) {
 
 		/*î•ñƒwƒbƒ_‚ÌƒTƒCƒY‚ğæ“¾*/
 		unsigned char bitmapInfoHeaderSize = fgetc(file);
+		if (bitmapInfoHeaderSize != 40) {
+			/*windowsBitmapï¿½ï¿½40ï¿½oï¿½Cï¿½gï¿½Å’è‚¾ï¿½ï¿½ï¿½AOS/2ï¿½Ìê‡ï¿½ï¿½12ï¿½oï¿½Cï¿½gï¿½ç‚µï¿½ï¿½ï¿½Ì‚ÅAOS/2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Ìï¿½ï¿½ï¿½*/
+			/*TODO ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½Bitmapï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½mï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½Ù‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+			printf("This bitmap file is not windowsBitmap\n");
+			exit(1);
+		}
 
 		/*ƒtƒ@ƒCƒ‹‚ÌˆÊ’uw’èq‚ğ1ƒoƒCƒg–ß‚µ‚ÄAî•ñƒwƒbƒ_‚ÌŠJnˆÊ’u‚Ö*/
 		fseek(file, 1, SEEK_CUR);
