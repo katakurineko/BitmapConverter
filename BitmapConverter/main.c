@@ -6,10 +6,12 @@
 #define BITMAP_FILEHEADER_SIZE 14
 #define FILE_TYPE_SIZE 2
 
+unsigned long calcToMultipleOf4(unsigned long);
+
 int main(void) {
 
 	FILE *file;
-	int err = fopen_s(&file, "sampleImage.bmp", "r");
+	int err = fopen_s(&file, "24sample.bmp", "r");
 
 	if (err == 0) {
 		/*ファイルの取得に成功した際の処理*/
@@ -26,6 +28,8 @@ int main(void) {
 			exit(1);
 		}
 
+
+
 		/*情報ヘッダのサイズを取得*/
 		unsigned char bitmapInfoHeaderSize = fgetc(file);
 		if (bitmapInfoHeaderSize != 40) {
@@ -36,10 +40,10 @@ int main(void) {
 		}
 
 		/*ファイルの位置指定子を1バイト戻して、情報ヘッダの開始位置へ*/
-		fseek(file, 1, SEEK_CUR);
+		fseek(file, -1, SEEK_CUR);
 
 		/*情報ヘッダの情報を格納する領域を確保*/
-		char *bitmapInfoHeader = (char *)malloc(40);
+		char *bitmapInfoHeader = (char *)malloc(bitmapInfoHeaderSize);
 		if (bitmapInfoHeader == NULL) {
 			/*メモリの割当に失敗した際の処理*/
 			printf("Faild to allocate memory\n");
@@ -50,12 +54,12 @@ int main(void) {
 		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, file);
 
 		/*画像の幅、高さを取得*/
-		int width = bitmapInfoHeader[4];
-		int height = bitmapInfoHeader[8];
+		unsigned long width = bitmapInfoHeader[4];
+		unsigned long height = bitmapInfoHeader[8];
 
 		/*1画素あたりのデータサイズを取得*/
 		short bitsPerPixel = bitmapInfoHeader[14];
-		
+
 		if (bitsPerPixel != 24) {
 			/*ファイルが24bitでなかった際の処理*/
 			printf("This file is not 24bits");
@@ -71,8 +75,29 @@ int main(void) {
 			exit(1);
 		}
 
-		printf("%d\n", compression);
-		
+
+
+		/*画像の幅を4の倍数に変換*/
+		unsigned char widthMultipleOf4 = calcToMultipleOf4(width);
+
+		/*画像データのサイズを計算*/
+		unsigned char pictureDataSize = (widthMultipleOf4 * height) * 3;
+
+		/*画像データの情報を格納する領域を確保*/
+		unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
+		if (pictureData == NULL) {
+			/*メモリの割当に失敗した際の処理*/
+			printf("Faild to allocate memory\n");
+			exit(1);
+		}
+
+		/*情報ヘッダの情報を取得*/
+		fread(pictureData, sizeof(char), pictureDataSize, file);
+
+
+		for (int i = 0; i < pictureDataSize; i++) {
+			printf("%lx,%lx,%lx\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
+		}
 	}
 	else if (err == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
@@ -82,7 +107,12 @@ int main(void) {
 
 	_fcloseall();
 
+
 	printf("end");
 
 	return 0;
+}
+
+unsigned long calcToMultipleOf4(unsigned long x) {
+	return ((x - 1) / 4 + 1) * 4;
 }
