@@ -14,6 +14,8 @@
 #define BF_TYPE_REGION_SIZE 2
 #define FILE_TYPE_REGION_SIZE 2
 #define BF_SIZ_REGION_SIZE 4
+#define BF_RESERVED1_REGION_SIZE 2
+#define BF_RESERVED2_REGION_SIZE 2
 
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
@@ -131,6 +133,13 @@ int main(void) {
 		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
 		unsigned long bfSize = 100;
 		fwrite(&bfSize, sizeof(char), BF_SIZ_REGION_SIZE, postFile);
+
+		/*予約領域を書き込み*/
+		signed short bfReserved1 = 0;
+		fwrite(&bfReserved1, sizeof(char), BF_RESERVED1_REGION_SIZE, postFile);
+		signed short bfReserved2 = 0;
+		fwrite(&bfReserved2, sizeof(char), BF_RESERVED2_REGION_SIZE, postFile);
+
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
