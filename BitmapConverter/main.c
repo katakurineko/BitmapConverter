@@ -16,6 +16,10 @@
 #define BF_SIZ_REGION_SIZE 4
 #define BF_RESERVED1_REGION_SIZE 2
 #define BF_RESERVED2_REGION_SIZE 2
+#define BF_OFF_BITS_REGION_SIZE 4
+/*8bit形式のオフセットのサイズ
+(ファイルヘッダ)14 + (情報ヘッダ)40 + (カラーパレッド)256*4 */
+#define BF_OFF_BITS_VALUE 1078
 
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
@@ -139,6 +143,10 @@ int main(void) {
 		fwrite(&bfReserved1, sizeof(char), BF_RESERVED1_REGION_SIZE, postFile);
 		signed short bfReserved2 = 0;
 		fwrite(&bfReserved2, sizeof(char), BF_RESERVED2_REGION_SIZE, postFile);
+
+		/*ファイル先頭から画像データまでのオフセットを書き込み*/
+		unsigned long bfOffBits = BF_OFF_BITS_VALUE;
+		fwrite(&bfOffBits, sizeof(char), BF_OFF_BITS_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
