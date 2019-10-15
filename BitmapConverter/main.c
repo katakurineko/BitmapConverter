@@ -3,24 +3,27 @@
 #include<string.h>
 #include<errno.h>
 
+#include"calc.h"
+
+
 #define BITMAP_FILEHEADER_SIZE 14
 #define FILE_TYPE_SIZE 2
 
-unsigned long calcToMultipleOf4(unsigned long);
 
 int main(void) {
 
-	FILE *file;
-	int err = fopen_s(&file, "24sample.bmp", "r");
+	FILE *preFile, *postFile;
+	int preFileErr = fopen_s(&preFile, "24sample.bmp", "r");
+	
 
-	if (err == 0) {
+	if (preFileErr == 0) {
 		/*ファイルの取得に成功した際の処理*/
 
 		/*ファイルヘッダの情報を格納する領域を確保*/
 		char bitmapFileHeader[BITMAP_FILEHEADER_SIZE];
 
 		/*ファイルヘッダの情報を取得*/
-		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_SIZE, file);
+		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_SIZE, preFile);
 
 		if (strncmp("BM", bitmapFileHeader, 2) != 0) {
 			/*ファイルヘッダのファイルタイプがBMでなかった際の処理*/
@@ -31,7 +34,7 @@ int main(void) {
 
 
 		/*情報ヘッダのサイズを取得*/
-		unsigned char bitmapInfoHeaderSize = fgetc(file);
+		unsigned char bitmapInfoHeaderSize = fgetc(preFile);
 		if (bitmapInfoHeaderSize != 40) {
 			/*windowsBitmapは40バイト固定だが、OS/2の場合は12バイトらしいので、OS/2だった場合の処理*/
 			/*TODO その他のBitmapファイルも確認したほうがいいかも*/
@@ -40,7 +43,7 @@ int main(void) {
 		}
 
 		/*ファイルの位置指定子を1バイト戻して、情報ヘッダの開始位置へ*/
-		fseek(file, -1, SEEK_CUR);
+		fseek(preFile, -1, SEEK_CUR);
 
 		/*情報ヘッダの情報を格納する領域を確保*/
 		char *bitmapInfoHeader = (char *)malloc(bitmapInfoHeaderSize);
@@ -51,7 +54,7 @@ int main(void) {
 		}
 
 		/*情報ヘッダの情報を取得*/
-		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, file);
+		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, preFile);
 
 		/*画像の幅、高さを取得*/
 		unsigned long width = bitmapInfoHeader[4];
@@ -78,7 +81,7 @@ int main(void) {
 
 
 		/*画像の幅を4の倍数に変換*/
-		unsigned char widthMultipleOf4 = calcToMultipleOf4(width);
+		unsigned long widthMultipleOf4 = calcMultipleOf4(width);
 
 		/*画像データのサイズを計算*/
 		unsigned char pictureDataSize = (widthMultipleOf4 * height) * 3;
@@ -92,14 +95,14 @@ int main(void) {
 		}
 
 		/*情報ヘッダの情報を取得*/
-		fread(pictureData, sizeof(char), pictureDataSize, file);
+		fread(pictureData, sizeof(char), pictureDataSize, preFile);
 
 
 		for (int i = 0; i < pictureDataSize; i++) {
 			printf("%lx,%lx,%lx\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
 		}
 	}
-	else if (err == ENOENT) {
+	else if (preFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
 		printf("File is not exist\n");
 		exit(1);
@@ -111,8 +114,4 @@ int main(void) {
 	printf("end");
 
 	return 0;
-}
-
-unsigned long calcToMultipleOf4(unsigned long x) {
-	return ((x - 1) / 4 + 1) * 4;
 }
