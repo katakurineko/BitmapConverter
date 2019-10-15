@@ -11,7 +11,9 @@
 #define ADD_FILE_NAME "convert_"
 
 #define BITMAP_FILEHEADER_SIZE 14
+#define BF_TYPE_SIZE 2
 #define FILE_TYPE_SIZE 2
+
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
 
@@ -38,7 +40,14 @@ int main(void) {
 		/*ファイルヘッダの情報を取得*/
 		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_SIZE, preFile);
 
-		if (strncmp("BM", bitmapFileHeader, 2) != 0) {
+		/*ファイル形式.
+		2バイト（2文字）+ヌル文字分の領域を確保する.*/
+		char bfType[BF_TYPE_SIZE + 1];
+
+		/*ファイル形式を取得する*/
+		snprintf(bfType, BF_TYPE_SIZE + 1,"%s", bitmapFileHeader);
+
+		if (strcmp("BM", bfType) != 0) {
 			/*ファイルヘッダのファイルタイプがBMでなかった際の処理*/
 			printf("This file is not BMP file\n");
 			exit(1);
