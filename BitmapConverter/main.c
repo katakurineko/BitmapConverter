@@ -36,6 +36,8 @@
 #define BI_COMPRESSION_REGION_SIZE 4
 #define NOT_COMPRESSION 0
 
+#define BI_SIZE_IMAGE_REGION_SIZE 4
+
 int main(void) {
 
 	FILE *preFile, *postFile;
@@ -179,6 +181,11 @@ int main(void) {
 		/*圧縮形式を書き込み*/
 		unsigned long biCompression = NOT_COMPRESSION;
 		fwrite(&biCompression, sizeof(char), BI_COMPRESSION_REGION_SIZE, postFile);
+
+		/*画像データ部のサイズを書き込み*/
+		unsigned long biSizeImage = widthMultipleOf4 * height;
+		fwrite(&biSizeImage, sizeof(char), BI_SIZE_IMAGE_REGION_SIZE, postFile);
+
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
