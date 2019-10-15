@@ -12,6 +12,7 @@
 
 #define BITMAP_FILEHEADER_SIZE 14
 #define FILE_TYPE_SIZE 2
+#define WINDOWS_BITMAP_FILE_SIZE 40
 
 
 int main(void) {
@@ -28,7 +29,7 @@ int main(void) {
 	int postFileErr = fopen_s(&postFile, postFileName, "w");
 	
 
-	if (preFileErr == 0) {
+	if (preFileErr == 0 || postFileErr == 0) {
 		/*ファイルの取得に成功した際の処理*/
 
 		/*ファイルヘッダの情報を格納する領域を確保*/
@@ -47,7 +48,7 @@ int main(void) {
 
 		/*情報ヘッダのサイズを取得*/
 		unsigned char bitmapInfoHeaderSize = fgetc(preFile);
-		if (bitmapInfoHeaderSize != 40) {
+		if (bitmapInfoHeaderSize != WINDOWS_BITMAP_FILE_SIZE) {
 			/*windowsBitmapは40バイト固定だが、OS/2の場合は12バイトらしいので、OS/2だった場合の処理*/
 			/*TODO その他のBitmapファイルも確認したほうがいいかも*/
 			printf("This bitmap file is not windowsBitmap\n");
@@ -57,7 +58,7 @@ int main(void) {
 		/*ファイルの位置指定子を1バイト戻して、情報ヘッダの開始位置へ*/
 		fseek(preFile, -1, SEEK_CUR);
 
-		/*情報ヘッダの情報を格納する領域を確保*/
+		/*情報ヘッダの情報を格納する領域*/
 		char *bitmapInfoHeader = (char *)malloc(bitmapInfoHeaderSize);
 		if (bitmapInfoHeader == NULL) {
 			/*メモリの割当に失敗した際の処理*/
@@ -72,7 +73,7 @@ int main(void) {
 		unsigned long width = bitmapInfoHeader[4];
 		unsigned long height = bitmapInfoHeader[8];
 
-		/*1画素あたりのデータサイズを取得*/
+		/*1画素あたりのデータサイズ*/
 		short bitsPerPixel = bitmapInfoHeader[14];
 
 		if (bitsPerPixel != 24) {
@@ -81,7 +82,7 @@ int main(void) {
 			exit(1);
 		}
 
-		/*圧縮形式を取得*/
+		/*圧縮形式*/
 		int compression = bitmapInfoHeader[16];
 
 		if (compression != 0) {
@@ -92,13 +93,13 @@ int main(void) {
 
 
 
-		/*画像の幅を4の倍数に変換*/
+		/*データ上の画像の幅*/
 		unsigned long widthMultipleOf4 = calcMultipleOf4(width);
 
-		/*画像データのサイズを計算*/
+		/*画像データのサイズ*/
 		unsigned char pictureDataSize = (widthMultipleOf4 * height) * 3;
 
-		/*画像データの情報を格納する領域を確保*/
+		/*画像データの情報を格納する領域*/
 		unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
 		if (pictureData == NULL) {
 			/*メモリの割当に失敗した際の処理*/
@@ -114,7 +115,7 @@ int main(void) {
 			printf("%lx,%lx,%lx\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
 		}
 	}
-	else if (preFileErr == ENOENT) {
+	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
 		printf("File is not exist\n");
 		exit(1);
