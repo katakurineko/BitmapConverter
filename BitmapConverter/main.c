@@ -10,10 +10,10 @@
 /*24bit形式から8bit形式に変換したファイルの名前の前に付ける文字列*/
 #define ADD_FILE_NAME "convert_"
 
-#define BITMAP_FILEHEADER_SIZE 14
-#define BF_TYPE_SIZE 2
-#define FILE_TYPE_SIZE 2
-#define BF_SIZE_BYTES_SIZE 4
+#define BITMAP_FILEHEADER_REGION_SIZE 14
+#define BF_TYPE_REGION_SIZE 2
+#define FILE_TYPE_REGION_SIZE 2
+#define BF_SIZ_REGION_SIZE 4
 
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
@@ -36,17 +36,17 @@ int main(void) {
 		/*ファイルの取得に成功した際の処理*/
 
 		/*ファイルヘッダの情報を格納する領域を確保*/
-		char bitmapFileHeader[BITMAP_FILEHEADER_SIZE];
+		char bitmapFileHeader[BITMAP_FILEHEADER_REGION_SIZE];
 
 		/*ファイルヘッダの情報を取得*/
-		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_SIZE, preFile);
+		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_REGION_SIZE, preFile);
 
 		/*ファイル形式.
 		2バイト（2文字）+ヌル文字分の領域を確保する.*/
-		char bfType[BF_TYPE_SIZE + sizeof(char)];
+		char bfType[BF_TYPE_REGION_SIZE + sizeof(char)];
 
 		/*ファイル形式を取得する*/
-		snprintf(bfType, BF_TYPE_SIZE + sizeof(char), "%s", bitmapFileHeader);
+		snprintf(bfType, BF_TYPE_REGION_SIZE + sizeof(char), "%s", bitmapFileHeader);
 
 		if (strcmp("BM", bfType) != 0) {
 			/*ファイルヘッダのファイルタイプがBMでなかった際の処理*/
@@ -126,11 +126,11 @@ int main(void) {
 		}
 
 		/*ファイル形式を書き込み*/
-		fwrite("BM", sizeof(char), BF_TYPE_SIZE, postFile);
+		fwrite("BM", sizeof(char), BF_TYPE_REGION_SIZE, postFile);
 
 		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
 		unsigned long bfSize = 100;
-		fwrite(&bfSize, sizeof(char), BF_SIZE_BYTES_SIZE, postFile);
+		fwrite(&bfSize, sizeof(char), BF_SIZ_REGION_SIZE, postFile);
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
