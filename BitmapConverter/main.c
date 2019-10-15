@@ -21,17 +21,20 @@
 (ファイルヘッダ)14 + (情報ヘッダ)40 + (カラーパレッド)256*4 */
 #define BF_OFF_BITS_VALUE 1078
 
-#define BC_SIZE_REGION_SIZE 4
+#define BI_SIZE_REGION_SIZE 4
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
-#define BC_WIDTH_REGION_SIZE 4
-#define BC_HEIGHT_REGION_SIZE 4
+#define BI_WIDTH_REGION_SIZE 4
+#define BI_HEIGHT_REGION_SIZE 4
 
-#define BC_PLANES_REGION_SIZE 2
-#define BC_PLANES_VALUE 1
+#define BI_PLANES_REGION_SIZE 2
+#define BI_PLANES_VALUE 1
 
-#define BC_BIT_COUNT_REGION_SIZE 2
-#define BC_BIT_COUNT_VALUE 8
+#define BI_BIT_COUNT_REGION_SIZE 2
+#define BI_BIT_COUNT_VALUE 8
+
+#define BI_COMPRESSION_REGION_SIZE 4
+#define NOT_COMPRESSION 0
 
 int main(void) {
 
@@ -110,7 +113,7 @@ int main(void) {
 		/*圧縮形式*/
 		int compression = bitmapInfoHeader[16];
 
-		if (compression != 0) {
+		if (compression != NOT_COMPRESSION) {
 			/*ファイルが圧縮されている際の処理*/
 			printf("File is compressed");
 			exit(1);
@@ -158,21 +161,24 @@ int main(void) {
 		fwrite(&bfOffBits, sizeof(char), BF_OFF_BITS_REGION_SIZE, postFile);
 
 		/*情報ヘッダのサイズを書き込み*/
-		unsigned long bcSize = WINDOWS_BITMAP_FILE_SIZE;
-		fwrite(&bcSize, sizeof(char), BC_SIZE_REGION_SIZE, postFile);
+		unsigned long biSize = WINDOWS_BITMAP_FILE_SIZE;
+		fwrite(&biSize, sizeof(char), BI_SIZE_REGION_SIZE, postFile);
 
 		/*画像の幅と高さを書き込み*/
-		fwrite(&width, sizeof(char), BC_WIDTH_REGION_SIZE, postFile);
-		fwrite(&height, sizeof(char), BC_HEIGHT_REGION_SIZE, postFile);
+		fwrite(&width, sizeof(char), BI_WIDTH_REGION_SIZE, postFile);
+		fwrite(&height, sizeof(char), BI_HEIGHT_REGION_SIZE, postFile);
 
 		/*プレーン数を書き込み*/
-		unsigned short bcPlanes = BC_PLANES_VALUE;
-		fwrite(&bcPlanes, sizeof(char), BC_PLANES_REGION_SIZE, postFile);
+		unsigned short biPlanes = BI_PLANES_VALUE;
+		fwrite(&biPlanes, sizeof(char), BI_PLANES_REGION_SIZE, postFile);
 
 		/*1画素あたりのデータサイズを書き込み*/
-		unsigned short bcBitCount = BC_BIT_COUNT_VALUE;
-		fwrite(&bcBitCount, sizeof(char), BC_BIT_COUNT_REGION_SIZE, postFile);
+		unsigned short biBitCount = BI_BIT_COUNT_VALUE;
+		fwrite(&biBitCount, sizeof(char), BI_BIT_COUNT_REGION_SIZE, postFile);
 
+		/*圧縮形式を書き込み*/
+		unsigned long biCompression = NOT_COMPRESSION;
+		fwrite(&biCompression, sizeof(char), BI_COMPRESSION_REGION_SIZE, postFile);
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
