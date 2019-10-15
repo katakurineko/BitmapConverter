@@ -24,6 +24,9 @@
 #define BC_SIZE_REGION_SIZE 4
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
+#define BC_WIDTH_REGION_SIZE 4
+#define BC_HEIGHT_REGION_SIZE 4
+
 
 int main(void) {
 
@@ -152,6 +155,10 @@ int main(void) {
 		/*情報ヘッダのサイズを書き込み*/
 		unsigned long bcSize = WINDOWS_BITMAP_FILE_SIZE;
 		fwrite(&bcSize, sizeof(char), BC_SIZE_REGION_SIZE, postFile);
+
+		/*画像の幅と高さを書き込み*/
+		fwrite(&width, sizeof(char), BC_WIDTH_REGION_SIZE, postFile);
+		fwrite(&height, sizeof(char), BC_HEIGHT_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
