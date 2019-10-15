@@ -30,6 +30,8 @@
 #define BC_PLANES_REGION_SIZE 2
 #define BC_PLANES_VALUE 1
 
+#define BC_BIT_COUNT_REGION_SIZE 2
+#define BC_BIT_COUNT_VALUE 8
 
 int main(void) {
 
@@ -166,6 +168,10 @@ int main(void) {
 		/*プレーン数を書き込み*/
 		unsigned short bcPlanes = BC_PLANES_VALUE;
 		fwrite(&bcPlanes, sizeof(char), BC_PLANES_REGION_SIZE, postFile);
+
+		/*1画素あたりのデータサイズを書き込み*/
+		unsigned short bcBitCount = BC_BIT_COUNT_VALUE;
+		fwrite(&bcBitCount, sizeof(char), BC_BIT_COUNT_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
