@@ -29,7 +29,7 @@ int main(void) {
 
 	int preFileErr = fopen_s(&preFile, preFileName, "r");
 	int postFileErr = fopen_s(&postFile, postFileName, "w");
-	
+
 
 	if (preFileErr == 0 || postFileErr == 0) {
 		/*ファイルの取得に成功した際の処理*/
@@ -42,10 +42,10 @@ int main(void) {
 
 		/*ファイル形式.
 		2バイト（2文字）+ヌル文字分の領域を確保する.*/
-		char bfType[BF_TYPE_SIZE + 1];
+		char bfType[BF_TYPE_SIZE + sizeof(char)];
 
 		/*ファイル形式を取得する*/
-		snprintf(bfType, BF_TYPE_SIZE + 1,"%s", bitmapFileHeader);
+		snprintf(bfType, BF_TYPE_SIZE + sizeof(char), "%s", bitmapFileHeader);
 
 		if (strcmp("BM", bfType) != 0) {
 			/*ファイルヘッダのファイルタイプがBMでなかった際の処理*/
@@ -123,6 +123,13 @@ int main(void) {
 		for (int i = 0; i < pictureDataSize; i++) {
 			printf("%lx,%lx,%lx\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
 		}
+
+		/*ファイル形式を書き込み*/
+		fwrite("BM", sizeof(char), BF_TYPE_SIZE, postFile);
+
+		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
+		unsigned long bfSize = 100;
+		fwrite(&bfSize, sizeof(char), 4, postFile);
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
