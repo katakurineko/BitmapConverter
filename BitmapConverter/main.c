@@ -27,6 +27,9 @@
 #define BC_WIDTH_REGION_SIZE 4
 #define BC_HEIGHT_REGION_SIZE 4
 
+#define BC_PLANES_REGION_SIZE 2
+#define BC_PLANES_VALUE 1
+
 
 int main(void) {
 
@@ -159,6 +162,10 @@ int main(void) {
 		/*‰æ‘œ‚Ì•‚Æ‚‚³‚ğ‘‚«‚İ*/
 		fwrite(&width, sizeof(char), BC_WIDTH_REGION_SIZE, postFile);
 		fwrite(&height, sizeof(char), BC_HEIGHT_REGION_SIZE, postFile);
+
+		/*ƒvƒŒ[ƒ“”‚ğ‘‚«‚İ*/
+		unsigned short bcPlanes = BC_PLANES_VALUE;
+		fwrite(&bcPlanes, sizeof(char), BC_PLANES_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
