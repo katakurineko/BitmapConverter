@@ -13,6 +13,7 @@
 #define BITMAP_FILEHEADER_SIZE 14
 #define BF_TYPE_SIZE 2
 #define FILE_TYPE_SIZE 2
+#define BF_SIZE_BYTES_SIZE 4
 
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
@@ -129,7 +130,7 @@ int main(void) {
 
 		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
 		unsigned long bfSize = 100;
-		fwrite(&bfSize, sizeof(char), 4, postFile);
+		fwrite(&bfSize, sizeof(char), BF_SIZE_BYTES_SIZE, postFile);
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
