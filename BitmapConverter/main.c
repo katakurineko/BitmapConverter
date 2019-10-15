@@ -7,6 +7,9 @@
 #include"calc.h"
 
 
+/*24bit形式から8bit形式に変換したファイルの名前の前に付ける文字列*/
+#define ADD_FILE_NAME "convert_"
+
 #define BITMAP_FILEHEADER_SIZE 14
 #define FILE_TYPE_SIZE 2
 
@@ -14,7 +17,15 @@
 int main(void) {
 
 	FILE *preFile, *postFile;
-	int preFileErr = fopen_s(&preFile, "24sample.bmp", "r");
+
+	/*変換するファイルの名前*/
+	char preFileName[] = "24sample.bmp";
+
+	/*変換後のファイル名*/
+	char *postFileName = strJoin(ADD_FILE_NAME, preFileName);
+
+	int preFileErr = fopen_s(&preFile, preFileName, "r");
+	int postFileErr = fopen_s(&postFile, postFileName, "w");
 	
 
 	if (preFileErr == 0) {
