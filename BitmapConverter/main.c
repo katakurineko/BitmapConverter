@@ -46,6 +46,10 @@
 /*8bit形式の場合のパレット数*/
 #define BI_CLR_USED_8BIT 256
 
+#define BI_CLR_IMPORTANT_REGION_SIZE 4
+/*重要なパレッドのインデックス(0はすべて重要の意味)*/
+#define BI_CLR_IMPORTANT_VALUE 0
+
 int main(void) {
 
 	FILE *preFile, *postFile;
@@ -203,6 +207,10 @@ int main(void) {
 		/*パレット数の書き込み*/
 		unsigned long biClrUsed = BI_CLR_USED_8BIT;
 		fwrite(&biClrUsed, sizeof(char), BI_CLR_USED_REGION_SIZE, postFile);
+
+		/*重要なパレットのインデックスを書き込み*/
+		unsigned long biClrImportant = BI_CLR_IMPORTANT_VALUE;
+		fwrite(&biClrImportant, sizeof(char), BI_CLR_IMPORTANT_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
