@@ -21,6 +21,7 @@
 (ファイルヘッダ)14 + (情報ヘッダ)40 + (カラーパレッド)256*4 */
 #define BF_OFF_BITS_VALUE 1078
 
+#define BC_SIZE_REGION_SIZE 4
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
 
@@ -147,6 +148,10 @@ int main(void) {
 		/*ファイル先頭から画像データまでのオフセットを書き込み*/
 		unsigned long bfOffBits = BF_OFF_BITS_VALUE;
 		fwrite(&bfOffBits, sizeof(char), BF_OFF_BITS_REGION_SIZE, postFile);
+
+		/*情報ヘッダのサイズを書き込み*/
+		unsigned long bcSize = WINDOWS_BITMAP_FILE_SIZE;
+		fwrite(&bcSize, sizeof(char), BC_SIZE_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
