@@ -38,6 +38,10 @@
 
 #define BI_SIZE_IMAGE_REGION_SIZE 4
 
+#define BI_PELS_PER_METER_REGION_SIZE 4
+#define BI_X_PELS_PER_METER_VALUE 0
+#define BI_Y_PELS_PER_METER_VALUE 0
+
 int main(void) {
 
 	FILE *preFile, *postFile;
@@ -185,6 +189,12 @@ int main(void) {
 		/*画像データ部のサイズを書き込み*/
 		unsigned long biSizeImage = widthMultipleOf4 * height;
 		fwrite(&biSizeImage, sizeof(char), BI_SIZE_IMAGE_REGION_SIZE, postFile);
+
+		/*解像度を書き込み*/
+		unsigned long biXPixPerMeter = BI_X_PELS_PER_METER_VALUE;
+		unsigned long biYPixPerMeter = BI_Y_PELS_PER_METER_VALUE;
+		fwrite(&biXPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, postFile);
+		fwrite(&biYPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
