@@ -42,6 +42,10 @@
 #define BI_X_PELS_PER_METER_VALUE 0
 #define BI_Y_PELS_PER_METER_VALUE 0
 
+#define BI_CLR_USED_REGION_SIZE 4
+/*8bit形式の場合のパレット数*/
+#define BI_CLR_USED_8BIT 256
+
 int main(void) {
 
 	FILE *preFile, *postFile;
@@ -195,6 +199,10 @@ int main(void) {
 		unsigned long biYPixPerMeter = BI_Y_PELS_PER_METER_VALUE;
 		fwrite(&biXPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, postFile);
 		fwrite(&biYPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, postFile);
+
+		/*パレット数の書き込み*/
+		unsigned long biClrUsed = BI_CLR_USED_8BIT;
+		fwrite(&biClrUsed, sizeof(char), BI_CLR_USED_REGION_SIZE, postFile);
 
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
