@@ -1,3 +1,4 @@
 .vs/
 BitmapConverter/BitmapConverter.vcxproj.user
 Debug/
+convert_*.bmp
