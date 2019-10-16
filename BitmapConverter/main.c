@@ -6,6 +6,13 @@
 #include"strJoin.h"
 #include"calc.h"
 
+struct pixelDataRGB
+{
+	unsigned char blue;
+	unsigned char green;
+	unsigned char red;
+};
+
 
 /*24bit形式から8bit形式に変換したファイルの名前の前に付ける文字列*/
 #define ADD_FILE_NAME "convert_"
@@ -129,8 +136,11 @@ int main(void) {
 		/*データ上の画像の幅*/
 		unsigned long widthMultipleOf4 = calcMultipleOf4(width);
 
+		/*ピクセル数*/
+		unsigned char inputFileAllPixelNum = widthMultipleOf4 * height;
+
 		/*画像データのサイズ*/
-		unsigned char pictureDataSize = (widthMultipleOf4 * height) * 3;
+		unsigned char pictureDataSize = inputFileAllPixelNum * 3;
 
 		/*画像データの情報を格納する領域*/
 		unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
@@ -144,8 +154,11 @@ int main(void) {
 		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
 
-		for (int i = 0; i < pictureDataSize; i++) {
-			printf("%x,%x,%x\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
+		struct pixelDataRGB *inputFilePixelData =(struct pixelDataRGB*)malloc(inputFileAllPixelNum);
+		for (int i = 0; i < inputFileAllPixelNum; i++) {
+			inputFilePixelData[i].green = pictureData[i * 3];
+			inputFilePixelData[i].blue = pictureData[i * 3 + 1];
+			inputFilePixelData[i].red = pictureData[i * 3 + 2];
 		}
 
 		free(pictureData);
@@ -188,7 +201,7 @@ int main(void) {
 		fwrite(&biCompression, sizeof(biCompression), 1, outputFile);
 
 		/*画像データ部のサイズを書き込み*/
-		unsigned long biSizeImage = widthMultipleOf4 * height;
+		unsigned long biSizeImage = inputFileAllPixelNum;
 		fwrite(&biSizeImage, sizeof(biSizeImage), 1, outputFile);
 
 		/*解像度を書き込み*/
