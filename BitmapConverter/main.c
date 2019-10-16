@@ -206,14 +206,14 @@ int main(void) {
 		fwrite(&biClrImportant, sizeof(biClrImportant), 1, outputFile);
 
 		/*カラーパレッドの作成*/
-		unsigned char rgb = 0;
+		unsigned char rgbColorPalette = 0;
 		unsigned char colorPaletteReserved = 0;
 		for (int i = 0; i < BI_CLR_USED_8BIT; i++) {
 			for (int j = 0; j < 3; j++) {
-				fwrite(&rgb, sizeof(rgb), 1, outputFile);
+				fwrite(&rgbColorPalette, sizeof(rgbColorPalette), 1, outputFile);
 			}
 			fwrite(&colorPaletteReserved, sizeof(colorPaletteReserved), 1, outputFile);
-			rgb++;
+			rgbColorPalette++;
 		}
 
 	}
