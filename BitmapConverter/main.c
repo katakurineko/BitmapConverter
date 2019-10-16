@@ -63,6 +63,8 @@ int main(void) {
 	int preFileErr = fopen_s(&preFile, preFileName, "r");
 	int postFileErr = fopen_s(&postFile, postFileName, "w");
 
+	/*関数strJoin内でmallocを使用しているので、メモリ開放*/
+	free(postFileName);
 
 	if (preFileErr == 0 || postFileErr == 0) {
 		/*ファイルの取得に成功した際の処理*/
@@ -133,6 +135,8 @@ int main(void) {
 			exit(1);
 		}
 
+		free(bitmapInfoHeader);
+
 
 
 		/*データ上の画像の幅*/
@@ -156,6 +160,8 @@ int main(void) {
 		for (int i = 0; i < pictureDataSize; i++) {
 			printf("%lx,%lx,%lx\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
 		}
+
+		free(pictureData);
 
 		/*ファイル形式を書き込み*/
 		fwrite("BM", sizeof(char), BF_TYPE_REGION_SIZE, postFile);
@@ -212,6 +218,7 @@ int main(void) {
 		unsigned long biClrImportant = BI_CLR_IMPORTANT_VALUE;
 		fwrite(&biClrImportant, sizeof(char), BI_CLR_IMPORTANT_REGION_SIZE, postFile);
 
+		/*TODO カラーパレッドの作成*/
 	}
 	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
