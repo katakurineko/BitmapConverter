@@ -52,7 +52,8 @@
 
 int main(void) {
 
-	FILE *inputFile, *outputFile;
+	FILE *inputFile = NULL;
+	FILE *outputFile = NULL;
 
 	/*変換するファイルの名前*/
 	char inputFileName[] = "24sample.bmp";
