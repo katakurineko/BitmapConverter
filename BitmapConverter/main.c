@@ -33,6 +33,9 @@
 /*重要なパレッドのインデックス(0はすべて重要の意味)*/
 #define BI_CLR_IMPORTANT_VALUE 0
 
+/*カラーパレッドの予約領域の値*/
+#define RGB_RESERVED 0
+
 int main(void) {
 
 	FILE *inputFile = NULL;
@@ -204,10 +207,12 @@ int main(void) {
 
 		/*カラーパレッドの作成*/
 		unsigned char rgb = 0;
+		unsigned char colorPaletteReserved = 0;
 		for (int i = 0; i < BI_CLR_USED_8BIT; i++) {
 			for (int j = 0; j < 3; j++) {
 				fwrite(&rgb, sizeof(rgb), 1, outputFile);
 			}
+			fwrite(&colorPaletteReserved, sizeof(colorPaletteReserved), 1, outputFile);
 			rgb++;
 		}
 
