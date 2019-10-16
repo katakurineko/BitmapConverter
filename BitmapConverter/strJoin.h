@@ -1,6 +1,2 @@
-#ifndef _STR_JOIN_H_
-#define _STR_JOIN_H_
-
+#pragma once
 char *strJoin(char *, char *);
-
-#endif

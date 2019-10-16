@@ -5,13 +5,7 @@
 
 #include"strJoin.h"
 #include"calc.h"
-
-struct pixelDataRGB
-{
-	unsigned char blue;
-	unsigned char green;
-	unsigned char red;
-};
+#include"pixelDataRGB.h"
 
 
 /*24bit形式から8bit形式に変換したファイルの名前の前に付ける文字列*/
