@@ -219,7 +219,14 @@ int main(void) {
 		unsigned long biClrImportant = BI_CLR_IMPORTANT_VALUE;
 		fwrite(&biClrImportant, sizeof(char), BI_CLR_IMPORTANT_REGION_SIZE, outputFile);
 
-		/*TODO カラーパレッドの作成*/
+		/*カラーパレッドの作成*/
+		unsigned char rgb = 0;
+		for (int i = 0; i < 256; i++) {
+			for (int j = 0; j < 3; j++) {
+				fwrite(&rgb, sizeof(rgb), 1, outputFile);
+			}
+			rgb++;
+		}
 
 	}
 	else if (inputFileErr == ENOENT || outputFileErr == ENOENT) {
