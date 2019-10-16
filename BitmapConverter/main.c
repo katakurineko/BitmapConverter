@@ -161,6 +161,7 @@ int main(void) {
 			inputFilePixelData[i].red = pictureData[i * 3 + 2];
 		}
 
+		free(inputFilePixelData);
 		free(pictureData);
 
 		/*ファイル形式を書き込み*/
