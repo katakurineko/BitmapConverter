@@ -37,6 +37,10 @@
 /*カラーパレッドの予約領域の値*/
 #define RGB_RESERVED 0
 
+void pixelConversion(struct pixelDataRGB pixelData) {
+	printf("%d\n", pixelData.green, pixelData.blue, pixelData.red);
+}
+
 int main(void) {
 
 	FILE *inputFile = NULL;
@@ -147,16 +151,15 @@ int main(void) {
 		/*情報ヘッダの情報を取得*/
 		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
-
-		struct pixelDataRGB *inputFilePixelData =(struct pixelDataRGB*)malloc(inputFileAllPixelNum);
-		for (int i = 0; i < inputFileAllPixelNum; i++) {
+		printf("%d\n", inputFileAllPixelNum);
+		struct pixelDataRGB *inputFilePixelData =(struct pixelDataRGB*)malloc(inputFileAllPixelNum * sizeof(struct pixelDataRGB));
+		for (int i = 0; i < 3; i++) {
 			inputFilePixelData[i].green = pictureData[i * 3];
 			inputFilePixelData[i].blue = pictureData[i * 3 + 1];
 			inputFilePixelData[i].red = pictureData[i * 3 + 2];
 		}
 
-		/*TODO 構造体のfreeの方法を探る*/
-		/*free(inputFilePixelData);*/
+		free(inputFilePixelData);
 		free(pictureData);
 
 		/*ファイル形式を書き込み*/
