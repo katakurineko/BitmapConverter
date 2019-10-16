@@ -158,7 +158,7 @@ int main(void) {
 
 
 		for (int i = 0; i < pictureDataSize; i++) {
-			printf("%lx,%lx,%lx\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
+			printf("%x,%x,%x\n", pictureData[i * 3], pictureData[i * 3 + 1], pictureData[i * 3 + 2]);
 		}
 
 		free(pictureData);
