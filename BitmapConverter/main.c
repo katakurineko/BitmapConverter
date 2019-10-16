@@ -12,41 +12,24 @@
 
 #define BITMAP_FILEHEADER_REGION_SIZE 14
 #define BF_TYPE_REGION_SIZE 2
-#define FILE_TYPE_REGION_SIZE 2
-#define BF_SIZ_REGION_SIZE 4
-#define BF_RESERVED1_REGION_SIZE 2
-#define BF_RESERVED2_REGION_SIZE 2
-#define BF_OFF_BITS_REGION_SIZE 4
 /*8bit形式のオフセットのサイズ
 (ファイルヘッダ)14 + (情報ヘッダ)40 + (カラーパレッド)256*4 */
 #define BF_OFF_BITS_VALUE 1078
 
-#define BI_SIZE_REGION_SIZE 4
 #define WINDOWS_BITMAP_FILE_SIZE 40
 
-#define BI_WIDTH_REGION_SIZE 4
-#define BI_HEIGHT_REGION_SIZE 4
-
-#define BI_PLANES_REGION_SIZE 2
 #define BI_PLANES_VALUE 1
 
-#define BI_BIT_COUNT_REGION_SIZE 2
 #define BI_BIT_COUNT_VALUE 8
 
-#define BI_COMPRESSION_REGION_SIZE 4
 #define NOT_COMPRESSION 0
 
-#define BI_SIZE_IMAGE_REGION_SIZE 4
-
-#define BI_PELS_PER_METER_REGION_SIZE 4
 #define BI_X_PELS_PER_METER_VALUE 0
 #define BI_Y_PELS_PER_METER_VALUE 0
 
-#define BI_CLR_USED_REGION_SIZE 4
 /*8bit形式の場合のパレット数*/
 #define BI_CLR_USED_8BIT 256
 
-#define BI_CLR_IMPORTANT_REGION_SIZE 4
 /*重要なパレッドのインデックス(0はすべて重要の意味)*/
 #define BI_CLR_IMPORTANT_VALUE 0
 
@@ -165,63 +148,63 @@ int main(void) {
 		free(pictureData);
 
 		/*ファイル形式を書き込み*/
-		fwrite("BM", sizeof(char), BF_TYPE_REGION_SIZE, outputFile);
+		fwrite(bfType, strlen(bfType), 1, outputFile);
 
 		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
 		unsigned long bfSize = 100;
-		fwrite(&bfSize, sizeof(char), BF_SIZ_REGION_SIZE, outputFile);
+		fwrite(&bfSize, sizeof(bfSize), 1, outputFile);
 
 		/*予約領域を書き込み*/
 		signed short bfReserved1 = 0;
-		fwrite(&bfReserved1, sizeof(char), BF_RESERVED1_REGION_SIZE, outputFile);
+		fwrite(&bfReserved1, sizeof(bfReserved1), 1, outputFile);
 		signed short bfReserved2 = 0;
-		fwrite(&bfReserved2, sizeof(char), BF_RESERVED2_REGION_SIZE, outputFile);
+		fwrite(&bfReserved2, sizeof(bfReserved2), 1, outputFile);
 
 		/*ファイル先頭から画像データまでのオフセットを書き込み*/
 		unsigned long bfOffBits = BF_OFF_BITS_VALUE;
-		fwrite(&bfOffBits, sizeof(char), BF_OFF_BITS_REGION_SIZE, outputFile);
+		fwrite(&bfOffBits, sizeof(bfOffBits), 1, outputFile);
 
 		/*情報ヘッダのサイズを書き込み*/
 		unsigned long biSize = WINDOWS_BITMAP_FILE_SIZE;
-		fwrite(&biSize, sizeof(char), BI_SIZE_REGION_SIZE, outputFile);
+		fwrite(&biSize, sizeof(biSize), 1, outputFile);
 
 		/*画像の幅と高さを書き込み*/
-		fwrite(&width, sizeof(char), BI_WIDTH_REGION_SIZE, outputFile);
-		fwrite(&height, sizeof(char), BI_HEIGHT_REGION_SIZE, outputFile);
+		fwrite(&width, sizeof(width), 1, outputFile);
+		fwrite(&height, sizeof(height), 1, outputFile);
 
 		/*プレーン数を書き込み*/
 		unsigned short biPlanes = BI_PLANES_VALUE;
-		fwrite(&biPlanes, sizeof(char), BI_PLANES_REGION_SIZE, outputFile);
+		fwrite(&biPlanes, sizeof(biPlanes), 1, outputFile);
 
 		/*1画素あたりのデータサイズを書き込み*/
 		unsigned short biBitCount = BI_BIT_COUNT_VALUE;
-		fwrite(&biBitCount, sizeof(char), BI_BIT_COUNT_REGION_SIZE, outputFile);
+		fwrite(&biBitCount, sizeof(biBitCount), 1, outputFile);
 
 		/*圧縮形式を書き込み*/
 		unsigned long biCompression = NOT_COMPRESSION;
-		fwrite(&biCompression, sizeof(char), BI_COMPRESSION_REGION_SIZE, outputFile);
+		fwrite(&biCompression, sizeof(biCompression), 1, outputFile);
 
 		/*画像データ部のサイズを書き込み*/
 		unsigned long biSizeImage = widthMultipleOf4 * height;
-		fwrite(&biSizeImage, sizeof(char), BI_SIZE_IMAGE_REGION_SIZE, outputFile);
+		fwrite(&biSizeImage, sizeof(biSizeImage), 1, outputFile);
 
 		/*解像度を書き込み*/
 		unsigned long biXPixPerMeter = BI_X_PELS_PER_METER_VALUE;
 		unsigned long biYPixPerMeter = BI_Y_PELS_PER_METER_VALUE;
-		fwrite(&biXPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, outputFile);
-		fwrite(&biYPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, outputFile);
+		fwrite(&biXPixPerMeter, sizeof(biXPixPerMeter), 1, outputFile);
+		fwrite(&biYPixPerMeter, sizeof(biYPixPerMeter), 1, outputFile);
 
 		/*パレット数の書き込み*/
 		unsigned long biClrUsed = BI_CLR_USED_8BIT;
-		fwrite(&biClrUsed, sizeof(char), BI_CLR_USED_REGION_SIZE, outputFile);
+		fwrite(&biClrUsed, sizeof(biClrUsed), 1, outputFile);
 
 		/*重要なパレットのインデックスを書き込み*/
 		unsigned long biClrImportant = BI_CLR_IMPORTANT_VALUE;
-		fwrite(&biClrImportant, sizeof(char), BI_CLR_IMPORTANT_REGION_SIZE, outputFile);
+		fwrite(&biClrImportant, sizeof(biClrImportant), 1, outputFile);
 
 		/*カラーパレッドの作成*/
 		unsigned char rgb = 0;
-		for (int i = 0; i < 256; i++) {
+		for (int i = 0; i < BI_CLR_USED_8BIT; i++) {
 			for (int j = 0; j < 3; j++) {
 				fwrite(&rgb, sizeof(rgb), 1, outputFile);
 			}
