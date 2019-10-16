@@ -52,28 +52,28 @@
 
 int main(void) {
 
-	FILE *preFile, *postFile;
+	FILE *inputFile, *outputFile;
 
 	/*変換するファイルの名前*/
-	char preFileName[] = "24sample.bmp";
+	char inputFileName[] = "24sample.bmp";
 
 	/*変換後のファイル名*/
-	char *postFileName = strJoin(ADD_FILE_NAME, preFileName);
+	char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
 
-	int preFileErr = fopen_s(&preFile, preFileName, "r");
-	int postFileErr = fopen_s(&postFile, postFileName, "w");
+	int inputFileErr = fopen_s(&inputFile, inputFileName, "r");
+	int outputFileErr = fopen_s(&outputFile, outputFileName, "w");
 
 	/*関数strJoin内でmallocを使用しているので、メモリ開放*/
-	free(postFileName);
+	free(outputFileName);
 
-	if (preFileErr == 0 || postFileErr == 0) {
+	if (inputFileErr == 0 || outputFileErr == 0) {
 		/*ファイルの取得に成功した際の処理*/
 
 		/*ファイルヘッダの情報を格納する領域を確保*/
 		char bitmapFileHeader[BITMAP_FILEHEADER_REGION_SIZE];
 
 		/*ファイルヘッダの情報を取得*/
-		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_REGION_SIZE, preFile);
+		fread(&bitmapFileHeader, sizeof(char), BITMAP_FILEHEADER_REGION_SIZE, inputFile);
 
 		/*ファイル形式.
 		2バイト（2文字）+ヌル文字分の領域を確保する.*/
@@ -91,7 +91,7 @@ int main(void) {
 
 
 		/*情報ヘッダのサイズを取得*/
-		unsigned char bitmapInfoHeaderSize = fgetc(preFile);
+		unsigned char bitmapInfoHeaderSize = fgetc(inputFile);
 		if (bitmapInfoHeaderSize != WINDOWS_BITMAP_FILE_SIZE) {
 			/*windowsBitmapは40バイト固定だが、OS/2の場合は12バイトらしいので、OS/2だった場合の処理*/
 			/*TODO その他のBitmapファイルも確認したほうがいいかも*/
@@ -100,7 +100,7 @@ int main(void) {
 		}
 
 		/*ファイルの位置指定子を1バイト戻して、情報ヘッダの開始位置へ*/
-		fseek(preFile, -1, SEEK_CUR);
+		fseek(inputFile, -1, SEEK_CUR);
 
 		/*情報ヘッダの情報を格納する領域*/
 		char *bitmapInfoHeader = (char *)malloc(bitmapInfoHeaderSize);
@@ -111,7 +111,7 @@ int main(void) {
 		}
 
 		/*情報ヘッダの情報を取得*/
-		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, preFile);
+		fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, inputFile);
 
 		/*画像の幅、高さを取得*/
 		unsigned long width = bitmapInfoHeader[4];
@@ -154,7 +154,7 @@ int main(void) {
 		}
 
 		/*情報ヘッダの情報を取得*/
-		fread(pictureData, sizeof(char), pictureDataSize, preFile);
+		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
 
 		for (int i = 0; i < pictureDataSize; i++) {
@@ -164,63 +164,64 @@ int main(void) {
 		free(pictureData);
 
 		/*ファイル形式を書き込み*/
-		fwrite("BM", sizeof(char), BF_TYPE_REGION_SIZE, postFile);
+		fwrite("BM", sizeof(char), BF_TYPE_REGION_SIZE, outputFile);
 
 		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
 		unsigned long bfSize = 100;
-		fwrite(&bfSize, sizeof(char), BF_SIZ_REGION_SIZE, postFile);
+		fwrite(&bfSize, sizeof(char), BF_SIZ_REGION_SIZE, outputFile);
 
 		/*予約領域を書き込み*/
 		signed short bfReserved1 = 0;
-		fwrite(&bfReserved1, sizeof(char), BF_RESERVED1_REGION_SIZE, postFile);
+		fwrite(&bfReserved1, sizeof(char), BF_RESERVED1_REGION_SIZE, outputFile);
 		signed short bfReserved2 = 0;
-		fwrite(&bfReserved2, sizeof(char), BF_RESERVED2_REGION_SIZE, postFile);
+		fwrite(&bfReserved2, sizeof(char), BF_RESERVED2_REGION_SIZE, outputFile);
 
 		/*ファイル先頭から画像データまでのオフセットを書き込み*/
 		unsigned long bfOffBits = BF_OFF_BITS_VALUE;
-		fwrite(&bfOffBits, sizeof(char), BF_OFF_BITS_REGION_SIZE, postFile);
+		fwrite(&bfOffBits, sizeof(char), BF_OFF_BITS_REGION_SIZE, outputFile);
 
 		/*情報ヘッダのサイズを書き込み*/
 		unsigned long biSize = WINDOWS_BITMAP_FILE_SIZE;
-		fwrite(&biSize, sizeof(char), BI_SIZE_REGION_SIZE, postFile);
+		fwrite(&biSize, sizeof(char), BI_SIZE_REGION_SIZE, outputFile);
 
 		/*画像の幅と高さを書き込み*/
-		fwrite(&width, sizeof(char), BI_WIDTH_REGION_SIZE, postFile);
-		fwrite(&height, sizeof(char), BI_HEIGHT_REGION_SIZE, postFile);
+		fwrite(&width, sizeof(char), BI_WIDTH_REGION_SIZE, outputFile);
+		fwrite(&height, sizeof(char), BI_HEIGHT_REGION_SIZE, outputFile);
 
 		/*プレーン数を書き込み*/
 		unsigned short biPlanes = BI_PLANES_VALUE;
-		fwrite(&biPlanes, sizeof(char), BI_PLANES_REGION_SIZE, postFile);
+		fwrite(&biPlanes, sizeof(char), BI_PLANES_REGION_SIZE, outputFile);
 
 		/*1画素あたりのデータサイズを書き込み*/
 		unsigned short biBitCount = BI_BIT_COUNT_VALUE;
-		fwrite(&biBitCount, sizeof(char), BI_BIT_COUNT_REGION_SIZE, postFile);
+		fwrite(&biBitCount, sizeof(char), BI_BIT_COUNT_REGION_SIZE, outputFile);
 
 		/*圧縮形式を書き込み*/
 		unsigned long biCompression = NOT_COMPRESSION;
-		fwrite(&biCompression, sizeof(char), BI_COMPRESSION_REGION_SIZE, postFile);
+		fwrite(&biCompression, sizeof(char), BI_COMPRESSION_REGION_SIZE, outputFile);
 
 		/*画像データ部のサイズを書き込み*/
 		unsigned long biSizeImage = widthMultipleOf4 * height;
-		fwrite(&biSizeImage, sizeof(char), BI_SIZE_IMAGE_REGION_SIZE, postFile);
+		fwrite(&biSizeImage, sizeof(char), BI_SIZE_IMAGE_REGION_SIZE, outputFile);
 
 		/*解像度を書き込み*/
 		unsigned long biXPixPerMeter = BI_X_PELS_PER_METER_VALUE;
 		unsigned long biYPixPerMeter = BI_Y_PELS_PER_METER_VALUE;
-		fwrite(&biXPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, postFile);
-		fwrite(&biYPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, postFile);
+		fwrite(&biXPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, outputFile);
+		fwrite(&biYPixPerMeter, sizeof(char), BI_PELS_PER_METER_REGION_SIZE, outputFile);
 
 		/*パレット数の書き込み*/
 		unsigned long biClrUsed = BI_CLR_USED_8BIT;
-		fwrite(&biClrUsed, sizeof(char), BI_CLR_USED_REGION_SIZE, postFile);
+		fwrite(&biClrUsed, sizeof(char), BI_CLR_USED_REGION_SIZE, outputFile);
 
 		/*重要なパレットのインデックスを書き込み*/
 		unsigned long biClrImportant = BI_CLR_IMPORTANT_VALUE;
-		fwrite(&biClrImportant, sizeof(char), BI_CLR_IMPORTANT_REGION_SIZE, postFile);
+		fwrite(&biClrImportant, sizeof(char), BI_CLR_IMPORTANT_REGION_SIZE, outputFile);
 
 		/*TODO カラーパレッドの作成*/
+
 	}
-	else if (preFileErr == ENOENT || postFileErr == ENOENT) {
+	else if (inputFileErr == ENOENT || outputFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
 		printf("File is not exist\n");
 		exit(1);
