@@ -161,7 +161,8 @@ int main(void) {
 			inputFilePixelData[i].red = pictureData[i * 3 + 2];
 		}
 
-		free(inputFilePixelData);
+		/*TODO 構造体のfreeの方法を探る*/
+		/*free(inputFilePixelData);*/
 		free(pictureData);
 
 		/*ファイル形式を書き込み*/
