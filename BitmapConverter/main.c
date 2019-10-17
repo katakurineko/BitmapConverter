@@ -148,7 +148,7 @@ int main(void) {
 		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
 		/*変換前画像の画像データ格納用構造体*/
-		struct pixelDataRGB *inputFilePixelData =(struct pixelDataRGB*)malloc(inputFileAllPixelNum * sizeof(struct pixelDataRGB));
+		pixelDataRGB *inputFilePixelData =(pixelDataRGB*)malloc(inputFileAllPixelNum * sizeof(pixelDataRGB));
 
 		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
 			inputFilePixelData[i].green = pictureData[i * 3];

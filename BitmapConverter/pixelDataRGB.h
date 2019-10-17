@@ -1,7 +1,7 @@
 #pragma once
-struct pixelDataRGB
+typedef struct pixelDataRGB
 {
 	unsigned char blue;
 	unsigned char green;
 	unsigned char red;
-};
+}pixelDataRGB;
