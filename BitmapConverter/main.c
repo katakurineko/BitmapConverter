@@ -37,8 +37,13 @@
 /*カラーパレッドの予約領域の値*/
 #define RGB_RESERVED 0
 
-void pixelConversion(struct pixelDataRGB *pixelData) {
-	printf("%d,%d,%d\n", pixelData->green, pixelData->blue, pixelData->red);
+/*RGBからグレースケールへの変換係数*/
+#define RED_COEFF 0.299
+#define BLUE_COEFF 0.587
+#define GREEN_COEFF 0.114
+
+unsigned char pixelConverter(struct pixelDataRGB *pixelData) {
+	return GREEN_COEFF * pixelData->green + BLUE_COEFF * pixelData->blue + RED_COEFF * pixelData->red;
 }
 
 int main(void) {
@@ -151,7 +156,9 @@ int main(void) {
 		/*情報ヘッダの情報を取得*/
 		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
+		/*変換前画像の画像データ格納用構造体*/
 		struct pixelDataRGB *inputFilePixelData =(struct pixelDataRGB*)malloc(inputFileAllPixelNum * sizeof(struct pixelDataRGB));
+
 		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
 			inputFilePixelData[i].green = pictureData[i * 3];
 			inputFilePixelData[i].blue = pictureData[i * 3 + 1];
