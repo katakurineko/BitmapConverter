@@ -82,7 +82,6 @@ int main(void) {
 		unsigned char bitmapInfoHeaderSize = fgetc(inputFile);
 		if (bitmapInfoHeaderSize != WINDOWS_BITMAP_FILE_SIZE) {
 			/*windowsBitmapは40バイト固定だが、OS/2の場合は12バイトらしいので、OS/2だった場合の処理*/
-			/*TODO その他のBitmapファイルも確認したほうがいいかも*/
 			printf("This bitmap file is not windowsBitmap\n");
 			exit(1);
 		}
@@ -241,7 +240,7 @@ int main(void) {
 	_fcloseall();
 
 
-	printf("end");
+	printf("Conversion succeeded\n");
 
 	return 0;
 }
