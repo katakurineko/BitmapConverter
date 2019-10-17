@@ -37,15 +37,6 @@
 /*カラーパレッドの予約領域の値*/
 #define RGB_RESERVED 0
 
-/*RGBからグレースケールへの変換係数*/
-#define RED_COEFF 0.299
-#define BLUE_COEFF 0.587
-#define GREEN_COEFF 0.114
-
-unsigned char pixelConverter(struct pixelDataRGB *pixelData) {
-	return GREEN_COEFF * pixelData->green + BLUE_COEFF * pixelData->blue + RED_COEFF * pixelData->red;
-}
-
 int main(void) {
 
 	FILE *inputFile = NULL;
@@ -235,7 +226,7 @@ int main(void) {
 
 		/*画像データの変換*/
 		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
-			unsigned char convertedData = pixelConverter(inputFilePixelData + i);
+			unsigned char convertedData = calcLuminance(inputFilePixelData + i);
 			fwrite(&convertedData, sizeof(convertedData), 1, outputFile);
 		}
 		free(inputFilePixelData);
