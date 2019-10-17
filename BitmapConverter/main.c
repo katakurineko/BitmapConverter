@@ -163,17 +163,15 @@ int main(void) {
 			inputFilePixelData[i].green = pictureData[i * 3];
 			inputFilePixelData[i].blue = pictureData[i * 3 + 1];
 			inputFilePixelData[i].red = pictureData[i * 3 + 2];
-			pixelConversion(inputFilePixelData + i);
 		}
 
-		free(inputFilePixelData);
 		free(pictureData);
 
 		/*ファイル形式を書き込み*/
 		fwrite(bfType, strlen(bfType), 1, outputFile);
 
-		/*TODO ファイルサイズを計算して書き込み(今は適当に100を代入)*/
-		unsigned long bfSize = 100;
+		/*ファイルサイズを計算して書き込み*/
+		unsigned long bfSize = BF_OFF_BITS_VALUE + inputFileAllPixelNum;
 		fwrite(&bfSize, sizeof(bfSize), 1, outputFile);
 
 		/*予約領域を書き込み*/
@@ -234,6 +232,13 @@ int main(void) {
 			fwrite(&colorPaletteReserved, sizeof(colorPaletteReserved), 1, outputFile);
 			rgbColorPalette++;
 		}
+
+		/*画像データの変換*/
+		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
+			unsigned char convertedData = pixelConverter(inputFilePixelData + i);
+			fwrite(&convertedData, sizeof(convertedData), 1, outputFile);
+		}
+		free(inputFilePixelData);
 
 	}
 	else if (inputFileErr == ENOENT || outputFileErr == ENOENT) {
