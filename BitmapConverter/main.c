@@ -135,10 +135,10 @@ int main(void) {
 		unsigned long widthMultipleOf4 = calcMultipleOf4(width);
 
 		/*ピクセル数*/
-		unsigned char inputFileAllPixelNum = widthMultipleOf4 * height;
+		unsigned long inputFileAllPixelNum = widthMultipleOf4 * height;
 
 		/*画像データのサイズ*/
-		unsigned char pictureDataSize = inputFileAllPixelNum * 3;
+		unsigned long pictureDataSize = inputFileAllPixelNum * 3;
 
 		/*画像データの情報を格納する領域*/
 		unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
@@ -152,7 +152,7 @@ int main(void) {
 		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
 		struct pixelDataRGB *inputFilePixelData =(struct pixelDataRGB*)malloc(inputFileAllPixelNum * sizeof(struct pixelDataRGB));
-		for (int i = 0; i < inputFileAllPixelNum; i++) {
+		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
 			inputFilePixelData[i].green = pictureData[i * 3];
 			inputFilePixelData[i].blue = pictureData[i * 3 + 1];
 			inputFilePixelData[i].red = pictureData[i * 3 + 2];
