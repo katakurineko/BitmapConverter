@@ -57,8 +57,8 @@ int main(void) {
 	/*変換後のファイル名*/
 	char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
 
-	int inputFileErr = fopen_s(&inputFile, inputFileName, "r");
-	int outputFileErr = fopen_s(&outputFile, outputFileName, "w");
+	int inputFileErr = fopen_s(&inputFile, inputFileName, "rb");
+	int outputFileErr = fopen_s(&outputFile, outputFileName, "wb");
 
 	/*関数strJoin内でmallocを使用しているので、メモリ開放*/
 	free(outputFileName);
