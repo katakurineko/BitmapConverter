@@ -141,28 +141,6 @@ int main(void) {
 		/*画像データのサイズ*/
 		unsigned long pictureDataSize = inputFileAllPixelNum * 3;
 
-		/*画像データの情報を格納する領域*/
-		unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
-		if (pictureData == NULL) {
-			/*メモリの割当に失敗した際の処理*/
-			printf("Faild to allocate memory\n");
-			exit(1);
-		}
-
-		/*画像データの情報を取得*/
-		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
-
-		/*変換前画像の画像データ格納用構造体*/
-		pixelDataRGB *inputFilePixelData =(pixelDataRGB*)malloc(inputFileAllPixelNum * sizeof(pixelDataRGB));
-
-		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
-			inputFilePixelData[i].green = pictureData[i * 3];
-			inputFilePixelData[i].blue = pictureData[i * 3 + 1];
-			inputFilePixelData[i].red = pictureData[i * 3 + 2];
-		}
-
-		free(pictureData);
-
 		/*ファイル形式を書き込み*/
 		fwrite(bfType, strlen(bfType), 1, outputFile);
 
@@ -229,12 +207,36 @@ int main(void) {
 			rgbColorPalette++;
 		}
 
+
+		/*画像データの情報を格納する領域*/
+		unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
+
+		if (pictureData == NULL) {
+			/*メモリの割当に失敗した際の処理*/
+			printf("Faild to allocate memory\n");
+			exit(1);
+		}
+
+		/*画像データの情報を取得*/
+		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
+
+		/*変換前画像の画像データ格納用構造体*/
+		pixelDataRGB inputFilePixelData;
+
 		/*画像データの変換*/
 		for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
-			unsigned char convertedData = calcLuminance(inputFilePixelData + i);
+
+			/*プログレス表示*/
+			printf("\r[%lu/%lu](%3.3f%%)",i, inputFileAllPixelNum,i*100/inputFileAllPixelNum);
+
+			inputFilePixelData.green = pictureData[i * 3];
+			inputFilePixelData.blue = pictureData[i * 3 + 1];
+			inputFilePixelData.red = pictureData[i * 3 + 2];
+			unsigned char convertedData = calcLuminance(&inputFilePixelData);
 			fwrite(&convertedData, sizeof(convertedData), 1, outputFile);
 		}
-		free(inputFilePixelData);
+
+		free(pictureData);
 
 		printf("Conversion succeeded.\n\nConverted file name is %s\n", outputFileName);
 
