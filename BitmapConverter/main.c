@@ -1,6 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define new  ::new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #include<stdio.h>
-#include<stdlib.h>
 #include<string.h>
 #include<errno.h>
 
@@ -39,7 +42,6 @@
 #define RGB_RESERVED 0
 
 int main(void) {
-
 	FILE *inputFile = NULL;
 
 	/*変換するファイルの名前*/
@@ -233,10 +235,13 @@ int main(void) {
 	free(pictureData);
 	fclose(outputFile);
 
-	printf("Conversion succeeded.\n\nConverted file name is %s\n", outputFileName);
+	printf("\n\nConversion succeeded.\n\nConverted file name is %s\n", outputFileName);
 
 	/*関数strJoin内でmallocを使用しているので、メモリ開放*/
 	free(outputFileName);
+
+	/*メモリリーク検出*/
+	_CrtDumpMemoryLeaks();
 
 	return 0;
 }
