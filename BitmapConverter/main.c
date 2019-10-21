@@ -149,7 +149,7 @@ int main(void) {
 			exit(1);
 		}
 
-		/*情報ヘッダの情報を取得*/
+		/*画像データの情報を取得*/
 		fread(pictureData, sizeof(char), pictureDataSize, inputFile);
 
 		/*変換前画像の画像データ格納用構造体*/
