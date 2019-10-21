@@ -40,22 +40,28 @@
 int main(void) {
 
 	FILE *inputFile = NULL;
-	FILE *outputFile = NULL;
 
 	/*変換するファイルの名前*/
 	char inputFileName[] = "24sample.bmp";
 
-	/*変換後のファイル名*/
-	char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
 
 	int inputFileErr = fopen_s(&inputFile, inputFileName, "rb");
-	int outputFileErr = fopen_s(&outputFile, outputFileName, "wb");
 
-	/*関数strJoin内でmallocを使用しているので、メモリ開放*/
-	free(outputFileName);
-
-	if (inputFileErr == 0 || outputFileErr == 0) {
+	if (inputFileErr == 0) {
 		/*ファイルの取得に成功した際の処理*/
+
+		FILE *outputFile = NULL;
+
+		/*変換後のファイル名*/
+		char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
+
+		int outputFileErr = fopen_s(&outputFile, outputFileName, "wb");
+
+
+		if (0 != outputFileErr) {
+			printf("Unexpected error has occurred\n");
+			exit(1);
+		}
 
 		/*ファイルヘッダの情報を格納する領域を確保*/
 		char bitmapFileHeader[BITMAP_FILEHEADER_REGION_SIZE];
@@ -230,8 +236,13 @@ int main(void) {
 		}
 		free(inputFilePixelData);
 
+		printf("Conversion succeeded.\n\nConverted file name is %s\n", outputFileName);
+
+		/*関数strJoin内でmallocを使用しているので、メモリ開放*/
+		free(outputFileName);
+
 	}
-	else if (inputFileErr == ENOENT || outputFileErr == ENOENT) {
+	else if (inputFileErr == ENOENT) {
 		/*ファイルが存在しなかった際の処理*/
 		printf("File is not exist\n");
 		exit(1);
@@ -240,7 +251,7 @@ int main(void) {
 	_fcloseall();
 
 
-	printf("Conversion succeeded\n");
+
 
 	return 0;
 }
