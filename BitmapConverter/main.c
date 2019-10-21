@@ -43,18 +43,15 @@
 
 int main(void) {
 	FILE *inputFile = NULL;
+	FILE *outputFile = NULL;
 
 	/*変換するファイルの名前*/
 	char inputFileName[] = "24sample.bmp";
 
-
-	inputFile = fopen(inputFileName, "rb");
-
-	FILE *outputFile = NULL;
-
 	/*変換後のファイル名*/
 	char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
 
+	inputFile = fopen(inputFileName, "rb");
 	outputFile = fopen(outputFileName, "wb");
 
 	/*ファイルヘッダの情報を格納する領域を確保*/
@@ -70,7 +67,7 @@ int main(void) {
 	/*ファイル形式を取得する*/
 	snprintf(bfType, BF_TYPE_REGION_SIZE + sizeof(char), "%s", bitmapFileHeader);
 
-	if (strcmp("BM", bfType) != 0) {
+	if (0 != strcmp("BM", bfType)) {
 		/*ファイルヘッダのファイルタイプがBMでなかった際の処理*/
 		printf("This file is not BMP file\n");
 		exit(1);
@@ -80,7 +77,7 @@ int main(void) {
 
 	/*情報ヘッダのサイズを取得*/
 	unsigned char bitmapInfoHeaderSize = fgetc(inputFile);
-	if (bitmapInfoHeaderSize != WINDOWS_BITMAP_FILE_SIZE) {
+	if (WINDOWS_BITMAP_FILE_SIZE != bitmapInfoHeaderSize) {
 		/*windowsBitmapは40バイト固定だが、OS/2の場合は12バイトらしいので、OS/2だった場合の処理*/
 		printf("This bitmap file is not windowsBitmap\n");
 		exit(1);
@@ -91,7 +88,7 @@ int main(void) {
 
 	/*情報ヘッダの情報を格納する領域*/
 	char *bitmapInfoHeader = (char *)malloc(bitmapInfoHeaderSize);
-	if (bitmapInfoHeader == NULL) {
+	if (NULL == bitmapInfoHeader) {
 		/*メモリの割当に失敗した際の処理*/
 		printf("Faild to allocate memory\n");
 		exit(1);
@@ -116,15 +113,13 @@ int main(void) {
 	/*圧縮形式*/
 	int compression = bitmapInfoHeader[16];
 
-	if (compression != NOT_COMPRESSION) {
+	if (NOT_COMPRESSION != compression) {
 		/*ファイルが圧縮されている際の処理*/
 		printf("File is compressed");
 		exit(1);
 	}
 
 	free(bitmapInfoHeader);
-
-
 
 	/*データ上の画像の幅*/
 	unsigned long widthMultipleOf4 = calcMultipleOf4(width);
@@ -205,7 +200,7 @@ int main(void) {
 	/*画像データの情報を格納する領域*/
 	unsigned char *pictureData = (unsigned char *)malloc(pictureDataSize);
 
-	if (pictureData == NULL) {
+	if (NULL == pictureData) {
 		/*メモリの割当に失敗した際の処理*/
 		printf("Faild to allocate memory\n");
 		exit(1);
