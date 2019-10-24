@@ -46,7 +46,7 @@ int main(void) {
 	FILE *outputFile = NULL;
 
 	/*変換するファイルの名前*/
-	char inputFileName[] = "24sample.bmp";
+	char inputFileName[] = "24sample11.bmp";
 
 	/*変換後のファイル名*/
 	char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
@@ -98,11 +98,14 @@ int main(void) {
 	fread(bitmapInfoHeader, sizeof(char), bitmapInfoHeaderSize, inputFile);
 
 	/*画像の幅、高さを取得*/
-	unsigned long width = bitmapInfoHeader[4];
-	unsigned long height = bitmapInfoHeader[8];
+	unsigned long width;
+	memcpy(&width, &bitmapInfoHeader[4], sizeof(width));
+	unsigned long height;
+	memcpy(&height, &bitmapInfoHeader[8], sizeof(height));
 
 	/*1画素あたりのデータサイズ*/
-	short bitsPerPixel = bitmapInfoHeader[14];
+	short bitsPerPixel;
+	memcpy(&bitsPerPixel, &bitmapInfoHeader[14], sizeof(bitsPerPixel));
 
 	if (bitsPerPixel != 24) {
 		/*ファイルが24bitでなかった際の処理*/
@@ -112,6 +115,7 @@ int main(void) {
 
 	/*圧縮形式*/
 	int compression = bitmapInfoHeader[16];
+	memcpy(&compression, &bitmapInfoHeader[16], sizeof(compression));
 
 	if (NOT_COMPRESSION != compression) {
 		/*ファイルが圧縮されている際の処理*/
