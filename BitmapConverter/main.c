@@ -46,7 +46,7 @@ int main(void) {
 	FILE *outputFile = NULL;
 
 	/*変換するファイルの名前*/
-	char inputFileName[] = "24sample11.bmp";
+	char inputFileName[] = "24sample2.bmp";
 
 	/*変換後のファイル名*/
 	char *outputFileName = strJoin(ADD_FILE_NAME, inputFileName);
@@ -129,16 +129,22 @@ int main(void) {
 	unsigned long widthMultipleOf4 = calcMultipleOf4(width);
 
 	/*ピクセル数*/
-	unsigned long inputFileAllPixelNum = widthMultipleOf4 * height;
+	unsigned long outputFileAllPixelNum = widthMultipleOf4 * height;
+
+	/*インプットファイルの画像データのパディング数*/
+	unsigned char inputPaddingNum = calcMultipleOf4(width * 3) - width * 3;
+
+	/*アウトプットファイルの画像データのパディング数*/
+	unsigned char outputPaddingNum = calcMultipleOf4(width) - width;
 
 	/*画像データのサイズ*/
-	unsigned long pictureDataSize = inputFileAllPixelNum * 3;
+	unsigned long pictureDataSize = outputFileAllPixelNum * 3;
 
 	/*ファイル形式を書き込み*/
 	fwrite(bfType, strlen(bfType), 1, outputFile);
 
 	/*ファイルサイズを計算して書き込み*/
-	unsigned long bfSize = BF_OFF_BITS_VALUE + inputFileAllPixelNum;
+	unsigned long bfSize = BF_OFF_BITS_VALUE + outputFileAllPixelNum;
 	fwrite(&bfSize, sizeof(bfSize), 1, outputFile);
 
 	/*予約領域を書き込み*/
@@ -172,7 +178,7 @@ int main(void) {
 	fwrite(&biCompression, sizeof(biCompression), 1, outputFile);
 
 	/*画像データ部のサイズを書き込み*/
-	unsigned long biSizeImage = inputFileAllPixelNum;
+	unsigned long biSizeImage = outputFileAllPixelNum;
 	fwrite(&biSizeImage, sizeof(biSizeImage), 1, outputFile);
 
 	/*解像度を書き込み*/
@@ -217,18 +223,28 @@ int main(void) {
 
 	/*変換前画像の画像データ格納用構造体*/
 	pixelDataRGB inputFilePixelData;
+	inputFilePixelData.red = 0x00;
+	inputFilePixelData.green = 0x00;
+	inputFilePixelData.blue = 0x00;
 
-	/*画像データの変換*/
-	for (unsigned long i = 0; i < inputFileAllPixelNum; i++) {
+	/*インプットファイルの画像データの、一行あたりのバイト数*/
+	unsigned long bytesNumInRowOfInputFile = width * 3 + inputPaddingNum;
+
+	for (unsigned long h = 0; h < height; h++) {
 
 		/*プログレス表示*/
-		printf("\r[%lu/%lu](%lu%%)", i + 1, inputFileAllPixelNum, (i + 1) * 100 / inputFileAllPixelNum);
+		printf("\r[%lu/%lu](%lu%%)", h + 1, height, (h + 1) * 100 / height);
 
-		inputFilePixelData.green = pictureData[i * 3];
-		inputFilePixelData.blue = pictureData[i * 3 + 1];
-		inputFilePixelData.red = pictureData[i * 3 + 2];
-		unsigned char convertedData = calcLuminance(&inputFilePixelData);
-		fwrite(&convertedData, sizeof(convertedData), 1, outputFile);
+		for (unsigned long w = 0; w < width; w++) {
+			inputFilePixelData.blue = pictureData[w * 3 + bytesNumInRowOfInputFile * h];
+			inputFilePixelData.green = pictureData[w * 3 + 1 + bytesNumInRowOfInputFile * h];
+			inputFilePixelData.red = pictureData[w * 3 + 2 + bytesNumInRowOfInputFile * h];
+			unsigned char convertedData = calcLuminance(&inputFilePixelData);
+			fwrite(&convertedData, sizeof(convertedData), 1, outputFile);
+		}
+		for (unsigned char padd = 0; padd < outputPaddingNum; padd++) {
+			fputc(0x00, outputFile);
+		}
 	}
 
 	free(pictureData);
