@@ -123,11 +123,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="calc.c" />
+    <ClCompile Include="isBitmapFile.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="strJoin.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calc.h" />
+    <ClInclude Include="bitmapInfoHeader.h" />
+    <ClInclude Include="isBitmapFile.h" />
+    <ClInclude Include="myBool.h" />
     <ClInclude Include="pixelDataRGB.h" />
     <ClInclude Include="strJoin.h" />
   </ItemGroup>
