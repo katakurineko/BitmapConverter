@@ -7,7 +7,7 @@
 
 #define BF_TYPE_REGION_SIZE 2
 
-char isBitmapFile(FILE* file) {
+MY_BOOL isBitmapFile(FILE* file) {
 
 	/*ファイルヘッダの情報を格納する領域*/
 	char bitmapFileHeader[BITMAP_FILEHEADER_REGION_SIZE] = { 0 };
@@ -23,8 +23,8 @@ char isBitmapFile(FILE* file) {
 
 	if (0 != strcmp("BM", bfType)) {
 		/*ファイルヘッダのファイルタイプがBMでなかった際の処理*/
-		return FALSE;
+		return MY_FALSE;
 	}
 
-	return TRUE;
+	return MY_TRUE;
 }
