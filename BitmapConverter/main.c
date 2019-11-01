@@ -7,37 +7,25 @@
 #include<string.h>
 #include<errno.h>
 
+/*自作bool*/
+#include"myBool.h"
+
+/*自作構造体*/
+#include"pixelDataRGB.h"
+#include "bitmapInfoHeader.h"
+
+/*自作関数*/
 #include"strJoin.h"
 #include"calc.h"
-#include"pixelDataRGB.h"
-#include"myBool.h"
 #include"isBitmapFile.h"
 #include"getBitmapInfoHeader.h"
-#include "bitmapInfoHeader.h"
+#include "getPictureData.h"
 #include "writeColorPaletteGrayScale.h"
+#include "writeBitmapFileHeader.h"
+#include "writeBitmapInfoHeader.h"
 
 /*24bit形式から8bit形式に変換したファイルの名前の前に付ける文字列*/
 #define ADD_FILE_NAME "convert_"
-
-#define WINDOWS_BITMAP_FILE_SIZE 40
-
-#define BI_PLANES_VALUE 1
-
-#define BI_BIT_COUNT_VALUE 8
-
-#define NOT_COMPRESSION 0
-
-#define BI_X_PELS_PER_METER_VALUE 0
-#define BI_Y_PELS_PER_METER_VALUE 0
-
-/*8bit形式の場合のパレット数*/
-#define BI_CLR_USED_8BIT 256
-
-/*重要なパレッドのインデックス(0はすべて重要の意味)*/
-#define BI_CLR_IMPORTANT_VALUE 0
-
-/*カラーパレッドの予約領域の値*/
-#define RGB_RESERVED 0
 
 int main(void) {
 	FILE* inputFile = NULL;
@@ -66,12 +54,10 @@ int main(void) {
 	}
 
 	/*情報ヘッダの情報を取得し構造体へ*/
-	bitmapInfoHeader BIH = *getBitmapInfoHeader(inputFile);
-	bitmapInfoHeader* pBIH = &BIH;
+	bitmapInfoHeader* pBIH = getBitmapInfoHeader(inputFile);
 
 	/*画像データの情報を取得*/
-	unsigned char* pictureData = NULL;
-	pictureData = getPictureData(inputFile, pBIH);
+	unsigned char* pictureData = getPictureData(inputFile, pBIH);
 
 	fclose(inputFile);
 
@@ -87,7 +73,9 @@ int main(void) {
 
 
 	unsigned long  width = pBIH->biWidth;
-	long  height = pBIH->biHeight;
+	unsigned long  height = abs(pBIH->biHeight);
+
+	free(pBIH);
 
 	/*インプットファイルの画像データのパディング数*/
 	unsigned char inputPaddingNum = calcMultipleOf4(width * 3) - width * 3;
@@ -96,10 +84,7 @@ int main(void) {
 	unsigned char outputPaddingNum = calcMultipleOf4(width) - width;
 
 	/*変換前画像の画像データ格納用構造体*/
-	pixelDataRGB inputFilePixelData;
-	inputFilePixelData.red = 0x00;
-	inputFilePixelData.green = 0x00;
-	inputFilePixelData.blue = 0x00;
+	pixelDataRGB inputFilePixelData = {.red = 0,.green = 0,.blue = 0};
 
 	/*インプットファイルの画像データの、一行あたりのバイト数*/
 	unsigned long bytesNumInRowOfInputFile = width * 3 + inputPaddingNum;

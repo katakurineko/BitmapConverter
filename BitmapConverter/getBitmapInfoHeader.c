@@ -6,10 +6,20 @@
 
 bitmapInfoHeader* getBitmapInfoHeader(FILE* file) {
 
+	bitmapInfoHeader* pBIH = (bitmapInfoHeader*)malloc(sizeof(bitmapInfoHeader));
+
 	/*返り値として返したい構造体bitmapInfoHeaderを初期化*/
-	bitmapInfoHeader BIH = {.biSize = 0, .biWidth =0,.biHeight =0,
-		.biPlanes =1,.biBitCount =0,.biCompression =0,.biSizeImage = 0,
-		.biXPelsPerMeter =0,.biYPelsPerMeter =0,.biClrUsed =0,.biClrImportant =0};
+	pBIH->biSize = 0;
+	pBIH->biWidth = 0;
+	pBIH->biHeight = 0;
+	pBIH->biPlanes = 1;
+	pBIH->biBitCount = 0;
+	pBIH->biCompression = 0;
+	pBIH->biSizeImage = 0;
+	pBIH->biXPelsPerMeter = 0;
+	pBIH->biYPelsPerMeter = 0;
+	pBIH->biClrUsed = 0;
+	pBIH->biClrImportant = 0;
 
 	/*情報ヘッダのサイズを取得*/
 	unsigned char bitmapInfoHeaderSize = fgetc(file);
@@ -37,23 +47,23 @@ bitmapInfoHeader* getBitmapInfoHeader(FILE* file) {
 	fread(bitmapInfoHeader, bitmapInfoHeaderSize, 1, file);
 
 	/*画像の幅、高さを取得*/
-	memcpy(&BIH.biWidth, &bitmapInfoHeader[4], sizeof(BIH.biWidth));
-	memcpy(&BIH.biHeight, &bitmapInfoHeader[8], sizeof(BIH.biHeight));
+	memcpy(&pBIH->biWidth, &bitmapInfoHeader[4], sizeof(pBIH->biWidth));
+	memcpy(&pBIH->biHeight, &bitmapInfoHeader[8], sizeof(pBIH->biHeight));
 
 	/*1画素あたりのデータサイズを取得*/
-	memcpy(&BIH.biBitCount, &bitmapInfoHeader[14], sizeof(BIH.biBitCount));
+	memcpy(&pBIH->biBitCount, &bitmapInfoHeader[14], sizeof(pBIH->biBitCount));
 
 	/*24bit形式かどうかの判定*/
-	if (24 != BIH.biBitCount) {
+	if (24 != pBIH->biBitCount) {
 		printf("This file is not 24bits");
 		exit(1);
 	}
 
 	/*圧縮形式を取得*/
-	memcpy(&BIH.biCompression, &bitmapInfoHeader[16], sizeof(BIH.biCompression));
+	memcpy(&pBIH->biCompression, &bitmapInfoHeader[16], sizeof(pBIH->biCompression));
 
 	/*ファイルが圧縮されていないかの判定*/
-	if (NOT_COMPRESSION != BIH.biCompression) {
+	if (NOT_COMPRESSION != pBIH->biCompression) {
 		printf("File is compressed");
 		exit(1);
 	}
@@ -61,5 +71,5 @@ bitmapInfoHeader* getBitmapInfoHeader(FILE* file) {
 
 	free(bitmapInfoHeader);
 
-	return &BIH;
+	return pBIH;
 }
