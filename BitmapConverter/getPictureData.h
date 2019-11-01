@@ -3,4 +3,6 @@
 
 #include "bitmapInfoHeader.h"
 
-unsigned char* getPictureData(FILE*, bitmapInfoHeader*);
+#include"pixelDataRGB.h"
+
+pixelDataRGB* getPictureData(FILE*, bitmapInfoHeader*);

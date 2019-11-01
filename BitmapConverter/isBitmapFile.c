@@ -7,13 +7,13 @@
 
 #define BF_TYPE_REGION_SIZE 2
 
-MY_BOOL isBitmapFile(FILE* file) {
+MY_BOOL isBitmapFile(FILE* pFile) {
 
 	/*ファイルヘッダの情報を格納する領域*/
 	char bitmapFileHeader[BITMAP_FILEHEADER_REGION_SIZE] = { 0 };
 
 	/*ファイルヘッダの情報を取得*/
-	fread(&bitmapFileHeader, sizeof(bitmapFileHeader), 1, file);
+	fread(&bitmapFileHeader, sizeof(bitmapFileHeader), 1, pFile);
 
 	/*ファイル形式の領域(2バイト（2文字）+1バイト(ヌル文字分))を確保する.*/
 	char bfType[BF_TYPE_REGION_SIZE + sizeof(char)];

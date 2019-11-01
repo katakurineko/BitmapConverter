@@ -4,9 +4,15 @@
 
 #include "bitmapInfoHeader.h"
 
-bitmapInfoHeader* getBitmapInfoHeader(FILE* file) {
+bitmapInfoHeader* getBitmapInfoHeader(FILE* pFile) {
 
 	bitmapInfoHeader* pBIH = (bitmapInfoHeader*)malloc(sizeof(bitmapInfoHeader));
+
+	if (NULL == pBIH) {
+		/*メモリの割当に失敗した際の処理*/
+		printf("Faild to allocate memory\n");
+		exit(1);
+	}
 
 	/*返り値として返したい構造体bitmapInfoHeaderを初期化*/
 	pBIH->biSize = 0;
@@ -22,7 +28,7 @@ bitmapInfoHeader* getBitmapInfoHeader(FILE* file) {
 	pBIH->biClrImportant = 0;
 
 	/*情報ヘッダのサイズを取得*/
-	unsigned char bitmapInfoHeaderSize = fgetc(file);
+	unsigned char bitmapInfoHeaderSize = fgetc(pFile);
 
 	/*windowsBitmapは40バイトだが、OS/2の場合は12バイトらしいので、
 	windowsBitmapかどうかを判定*/
@@ -32,19 +38,19 @@ bitmapInfoHeader* getBitmapInfoHeader(FILE* file) {
 	}
 
 	/*ファイルの位置指定子を1バイト戻して、情報ヘッダの開始位置へ*/
-	fseek(file, -1, SEEK_CUR);
+	fseek(pFile, -1, SEEK_CUR);
 
 	/*情報ヘッダの情報を格納する領域の確保*/
 	char* bitmapInfoHeader = (char *)malloc(bitmapInfoHeaderSize);
-	memset(bitmapInfoHeader, 0x00, bitmapInfoHeaderSize);
 	if (NULL == bitmapInfoHeader) {
 		/*メモリの割当に失敗した際の処理*/
 		printf("Faild to allocate memory\n");
 		exit(1);
 	}
+	memset(bitmapInfoHeader, 0x00, bitmapInfoHeaderSize);
 
 	/*情報ヘッダの情報を取得*/
-	fread(bitmapInfoHeader, bitmapInfoHeaderSize, 1, file);
+	fread(bitmapInfoHeader, bitmapInfoHeaderSize, 1, pFile);
 
 	/*画像の幅、高さを取得*/
 	memcpy(&pBIH->biWidth, &bitmapInfoHeader[4], sizeof(pBIH->biWidth));

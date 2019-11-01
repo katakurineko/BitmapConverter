@@ -123,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="calc.c" />
+    <ClCompile Include="convertBitmap24bitTo8bit.c" />
     <ClCompile Include="writeBitmapFileHeader.c" />
     <ClCompile Include="writeBitmapInfoHeader.c" />
     <ClCompile Include="writeColorPaletteGrayScale.c" />
@@ -131,10 +132,12 @@
     <ClCompile Include="isBitmapFile.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="strJoin.c" />
+    <ClCompile Include="writePictureData.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calc.h" />
     <ClInclude Include="bitmapInfoHeader.h" />
+    <ClInclude Include="convertBitmap24bitTo8bit.h" />
     <ClInclude Include="getBitmapInfoHeader.h" />
     <ClInclude Include="getPictureData.h" />
     <ClInclude Include="isBitmapFile.h" />
@@ -144,6 +147,7 @@
     <ClInclude Include="writeBitmapFileHeader.h" />
     <ClInclude Include="writeBitmapInfoHeader.h" />
     <ClInclude Include="writeColorPaletteGrayScale.h" />
+    <ClInclude Include="writePictureData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
