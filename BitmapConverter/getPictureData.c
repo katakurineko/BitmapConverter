@@ -19,9 +19,6 @@ pixelDataRGB* getPictureData(FILE* pFile,bitmapInfoHeader* pBIH) {
 		exit(1);
 	}
 
-	/*画像データの情報を取得*/
-	//fread(pictureData, pixelNum * sizeof(*pictureData), 1, file);
-
 	/*一行ごとのパディングの数*/
 	unsigned char paddingNum = calcMultipleOf4(pBIH->biWidth * 3) - pBIH->biWidth * 3;
 

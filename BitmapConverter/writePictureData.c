@@ -4,7 +4,7 @@
 
 #include "bitmapInfoHeader.h"
 
-void writePictureData(FILE* file, bitmapInfoHeader* pBIH, pixelDataRGB* pictureData) {
+void writePictureData(FILE* pFile, bitmapInfoHeader* pBIH, pixelDataRGB* pictureData) {
 	unsigned long  width = pBIH->biWidth;
 	unsigned long  height = abs(pBIH->biHeight);
 
@@ -17,7 +17,7 @@ void writePictureData(FILE* file, bitmapInfoHeader* pBIH, pixelDataRGB* pictureD
 
 		for (unsigned long w = 0; w < width; w++) {
 			unsigned char luminance = calcLuminance(pictureData + count);
-			fwrite(&luminance, sizeof(luminance), 1, file);
+			fwrite(&luminance, sizeof(luminance), 1, pFile);
 
 			/*プログレス表示*/
 			printf("\r[%lu/%lu](%lu%%)", count + 1, height * width, (count + 1) * 100 / (height * width));
@@ -27,7 +27,7 @@ void writePictureData(FILE* file, bitmapInfoHeader* pBIH, pixelDataRGB* pictureD
 
 		/*パディングの書き込み*/
 		for (unsigned char padd = 0; padd < paddingNum; padd++) {
-			fputc(0x00, file);
+			fputc(0x00, pFile);
 		}
 	}
 }
